@@ -1,0 +1,5 @@
+target/
+.idea/
+*.xml
+*.properties
+src/test/*
