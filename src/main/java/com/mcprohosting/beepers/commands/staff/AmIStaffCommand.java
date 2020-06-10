@@ -1,4 +1,4 @@
-package com.mcprohosting.beepers.commands;
+package com.mcprohosting.beepers.commands.staff;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;

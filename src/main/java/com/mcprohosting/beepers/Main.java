@@ -2,7 +2,7 @@ package com.mcprohosting.beepers;
 
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.mcprohosting.beepers.commands.AmIStaffCommand;
+import com.mcprohosting.beepers.commands.staff.AmIStaffCommand;
 import com.mcprohosting.beepers.commands.MultistickCommand;
 import com.mcprohosting.beepers.commands.NodeStatusCommand;
 import com.mcprohosting.beepers.listeners.MessageEvent;
@@ -43,7 +43,10 @@ public class Main {
 
         // Register commands
         client.addCommands(
+                // Staff Commands
                 new AmIStaffCommand(),
+
+                // GP Commands
                 new MultistickCommand(),
                 new NodeStatusCommand()
         );
