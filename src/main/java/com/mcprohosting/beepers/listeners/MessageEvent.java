@@ -7,6 +7,13 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MessageEvent extends ListenerAdapter {
     /*
     The actual swear is left private (obviously). You get this instead. It's commented out so my IDE doesn't yell at me.
@@ -18,10 +25,16 @@ public class MessageEvent extends ListenerAdapter {
         if(event.getMember() != null && QueryMember.isStaff(event.getMember())) {
             return;
         }
-        String message = event.getMessage().getContentRaw().toLowerCase().replace(" ", "").replaceAll("[^a-zA-Z0-9]", "");
-        String word = getSwear(message);
+        List<CharSequence> words = Arrays.asList(event.getMessage().getContentRaw().toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "").split(" "));
+        List<String> safeWords = new ArrayList<>();
+        for(CharSequence word : words) {
+            if(!checkForWord(word)) {
+                safeWords.add((String) word);
+            }
+        }
+        String word = getSwear(String.join("", safeWords));
         if (word != null) {
-            LoggerFactory.getLogger(this.getClass()).debug("Message '" + message + "' swear found: " + word);
+            LoggerFactory.getLogger(this.getClass()).debug("Message '" + event.getMessage().getContentRaw() + "' swear found: " + word);
             event.getMessage().delete().queue();
             event.getAuthor().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("Hey! You said a bad word, please refrain from swearing! Your message: ```" + event.getMessage().getContentRaw() + "```").queue());
             EmbedBuilder oof = new EmbedBuilder();
@@ -41,5 +54,28 @@ public class MessageEvent extends ListenerAdapter {
             }
         }
         return null;
+    }
+
+    public static boolean checkForWord(CharSequence word) {
+        // System.out.println(word);
+        for (String swear : swears) {
+            if (word.toString().contains(swear)) {
+                return false;
+            }
+        }
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(
+                    "words_alpha.txt"));
+            String str;
+            while ((str = in.readLine()) != null) {
+                if (str.contains(word)) {
+                    return true;
+                }
+            }
+            in.close();
+        } catch (IOException ignored) {
+        }
+
+        return false;
     }
 }
