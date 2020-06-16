@@ -3,6 +3,7 @@ package com.mcprohosting.beepers.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.mcprohosting.beepers.Main;
+import com.mcprohosting.beepers.util.QueryMember;
 import com.mcprohosting.beepers.util.SendTemporaryMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -43,7 +44,8 @@ public class NodeStatusCommand extends Command {
         args = args.replace(" ", "");
         if(args.contains("--no-dm")) {
             args = args.replace("--no-dm", "");
-            replyInDm = false;
+            if(commandEvent.getMember() != null && QueryMember.isStaff(commandEvent.getMember()))
+                replyInDm = false;
         }
         if(replyInDm) {
             commandEvent.getMessage().delete().queue();
@@ -78,6 +80,7 @@ public class NodeStatusCommand extends Command {
         embed.setTitle("MCProHosting Node Statuses", "https://panel.mcprohosting.com/status");
         embed.setDescription("Only showing status for locations with at least 1 down node.\n" +
                 "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
+        int locationOutages = 0;
         for(int i = 0; i < data.length(); i++) {
             JSONObject loc = data.getJSONObject(i);
             String name = loc.getString("location");
@@ -92,16 +95,18 @@ public class NodeStatusCommand extends Command {
                     down.add(String.valueOf(node.getInt("id")));
                 }
             }
+            if(downCount > 0)
+                locationOutages++;
             DecimalFormat df = new DecimalFormat("#.##");
             int upCount = nodeCount - downCount;
             if(upCount != nodeCount) {
                 embed.addField(name, "Node Outages: " + String.join(", ", down), true);
             }
-            if(embed.getFields().isEmpty()) {
-                embed.setDescription("**All nodes are up and working!**\n\n" +
-                        "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
-            }
 
+        }
+        if(locationOutages == 0) {
+            embed.setDescription("**All nodes are up and working!**\n\n" +
+                    "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
         }
         return embed;
     }
