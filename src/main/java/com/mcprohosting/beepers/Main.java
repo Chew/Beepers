@@ -49,6 +49,7 @@ public class Main {
                 new SyncSuggestionSiteCommand(),
 
                 // GP Commands
+                new IsLiveChatOpenCommand(),
                 new MultistickCommand(),
                 new NodeStatusCommand()
                 new ReportCommand()
