@@ -51,6 +51,7 @@ public class Main {
                 // GP Commands
                 new MultistickCommand(),
                 new NodeStatusCommand()
+                new ReportCommand()
         );
 
         // Register JDA
