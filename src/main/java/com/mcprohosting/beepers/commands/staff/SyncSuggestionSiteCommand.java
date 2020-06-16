@@ -56,6 +56,7 @@ public class SyncSuggestionSiteCommand extends Command {
                 String author = embed.getAuthor().getName();
                 String suggestion = embed.getTitle();
                 String description = embed.getDescription();
+                String jumpUrl = message.getJumpUrl();
                 long timestamp = message.getTimeCreated().toEpochSecond();
                 data.put(new JSONObject()
                         .put("author", author)
@@ -64,10 +65,13 @@ public class SyncSuggestionSiteCommand extends Command {
                         .put("epoch_second", timestamp)
                         .put("up", upCount)
                         .put("down", downCount)
+                        .put("url", jumpUrl)
                 );
             }
             logger.debug("Sending to server");
-            logger.debug("Response: " + sendSuggestionData(data));
+            String response = sendSuggestionData(data);
+            logger.debug("Response: " + response);
+            commandEvent.reply(response);
         });
     }
 
@@ -81,10 +85,11 @@ public class SyncSuggestionSiteCommand extends Command {
         try (Response response = Main.jda.getHttpClient().newCall(request).execute()) {
             return response.body().string();
         } catch (SocketTimeoutException e) {
-            return null;
+            e.printStackTrace();
+            return "SocketTimeoutException Occurred. See Terminal!";
         } catch (IOException e) {
             e.printStackTrace();
+            return "IOException Occurred. See Terminal!";
         }
-        return null;
     }
 }
