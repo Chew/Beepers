@@ -49,7 +49,7 @@ public class Main {
 
                 // GP Commands
                 new FAQCommand(),
-                new IsLiveChatOpenCommand(),
+                new LiveChatCommand(),
                 new MultistickCommand(),
                 new NodeStatusCommand(),
                 new ReportCommand()
