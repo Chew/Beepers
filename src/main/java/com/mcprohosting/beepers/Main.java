@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.mcprohosting.beepers.commands.*;
 import com.mcprohosting.beepers.commands.staff.AmIStaffCommand;
 import com.mcprohosting.beepers.commands.staff.FAQCommand;
+import com.mcprohosting.beepers.commands.staff.RuleCommand;
 import com.mcprohosting.beepers.commands.staff.SyncSuggestionSiteCommand;
 import com.mcprohosting.beepers.listeners.MessageEvent;
 import net.dv8tion.jda.api.JDA;
@@ -46,10 +47,11 @@ public class Main {
         client.addCommands(
                 // Staff Commands
                 new AmIStaffCommand(),
+                new FAQCommand(),
+                new RuleCommand(),
                 new SyncSuggestionSiteCommand(),
 
                 // GP Commands
-                new FAQCommand(),
                 new LiveChatCommand(),
                 new MultistickCommand(),
                 new NodeStatusCommand(),
