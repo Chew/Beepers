@@ -16,8 +16,6 @@ public class FAQCommand extends Command {
     public FAQCommand() {
         this.name = "faq";
         this.guildOnly = true;
-        this.cooldown = 10;
-        this.cooldownScope = CooldownScope.USER;
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
     }
 
