@@ -58,17 +58,24 @@ public class SyncSuggestionSiteCommand extends Command {
                 String description = embed.getDescription();
                 String jumpUrl = message.getJumpUrl();
                 long timestamp = message.getTimeCreated().toEpochSecond();
-                data.put(new JSONObject()
+                JSONObject payload = new JSONObject()
                         .put("author", author)
                         .put("title", suggestion)
                         .put("description", description)
                         .put("epoch_second", timestamp)
                         .put("up", upCount)
                         .put("down", downCount)
-                        .put("url", jumpUrl)
-                );
+                        .put("url", jumpUrl);
+                JSONObject field = new JSONObject();
+                if(embed.getFields().size() == 1) {
+                    MessageEmbed.Field theField = embed.getFields().get(0);
+                    field.put("name", theField.getName());
+                    field.put("value", theField.getValue());
+                    payload.put("status", field);
+                }
+                data.put(payload);
             }
-            logger.debug("Sending to server");
+            logger.debug("Sending to server: " + data.toString());
             String response = sendSuggestionData(data);
             logger.debug("Response: " + response);
             commandEvent.reply(response);
