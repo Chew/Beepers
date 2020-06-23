@@ -1,8 +1,9 @@
-package com.mcprohosting.beepers.commands;
+package com.mcprohosting.beepers.commands.staff;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ public class FAQCommand extends Command {
         this.guildOnly = true;
         this.cooldown = 10;
         this.cooldownScope = CooldownScope.USER;
+        this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
     }
 
     @Override

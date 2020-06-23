@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.mcprohosting.beepers.commands.*;
 import com.mcprohosting.beepers.commands.staff.AmIStaffCommand;
+import com.mcprohosting.beepers.commands.staff.FAQCommand;
 import com.mcprohosting.beepers.commands.staff.SyncSuggestionSiteCommand;
 import com.mcprohosting.beepers.listeners.MessageEvent;
 import net.dv8tion.jda.api.JDA;
