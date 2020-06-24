@@ -3,6 +3,7 @@ package com.mcprohosting.beepers.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,6 +16,7 @@ public class LiveChatCommand extends Command {
         this.aliases = new String[]{"islivechatopen"};
         this.cooldown = 1;
         this.cooldownScope = CooldownScope.CHANNEL;
+        this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
     }
 
     @Override

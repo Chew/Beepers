@@ -3,12 +3,14 @@ package com.mcprohosting.beepers.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 
 public class MultistickCommand extends Command {
     public MultistickCommand() {
         this.name = "multistick";
         this.cooldown = 10;
         this.cooldownScope = CooldownScope.CHANNEL;
+        this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
     }
 
     @Override

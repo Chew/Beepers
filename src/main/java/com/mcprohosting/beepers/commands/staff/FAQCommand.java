@@ -17,6 +17,7 @@ public class FAQCommand extends Command {
         this.name = "faq";
         this.guildOnly = true;
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
     }
 
     @Override

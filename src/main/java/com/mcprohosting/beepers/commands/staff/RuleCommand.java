@@ -15,6 +15,7 @@ public class RuleCommand extends Command {
         this.name = "rule";
         this.guildOnly = true;
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
     }
 
     @Override
