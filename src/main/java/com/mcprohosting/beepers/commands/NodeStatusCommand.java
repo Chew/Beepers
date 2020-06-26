@@ -77,6 +77,12 @@ public class NodeStatusCommand extends Command {
             embed.setColor(Color.decode("#ff0000"));
             return embed;
         }
+        if(data.getJSONObject(0).has("error")) {
+            embed.setTitle("Error!");
+            embed.setDescription(data.getJSONObject(0).getString("error"));
+            embed.setColor(Color.decode("#ff0000"));
+            return embed;
+        }
         embed.setTitle("MCProHosting Node Statuses", "https://panel.mcprohosting.com/status");
         embed.setDescription("Only showing status for locations with at least 1 down node.\n" +
                 "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
@@ -125,6 +131,12 @@ public class NodeStatusCommand extends Command {
             embed.setColor(Color.decode("#ff0000"));
             return embed;
         }
+        if(data.getJSONObject(0).has("error")) {
+            embed.setTitle("Error!");
+            embed.setDescription(data.getJSONObject(0).getString("error"));
+            embed.setColor(Color.decode("#ff0000"));
+            return embed;
+        }
         embed.setTitle("MCProHosting Status for Node " + nodeId, "https://panel.mcprohosting.com/status");
         JSONObject requestedNode = null;
         String location = null;
@@ -166,6 +178,9 @@ public class NodeStatusCommand extends Command {
 
         try (Response response = Main.jda.getHttpClient().newCall(request).execute()) {
             String r = response.body().string();
+            if(response.code() == 500) {
+                return new JSONArray().put(new JSONObject(r));
+            }
             return new JSONArray(r);
         } catch (SocketTimeoutException e) {
             return null;
