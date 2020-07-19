@@ -27,10 +27,10 @@ public class FAQCommand extends Command {
             LoggerFactory.getLogger(this.getClass()).error("FAQ Channel is null. This is not good.");
             return;
         }
-        faq.getHistory().retrievePast(25).queue((messages -> {
+        faq.getHistoryAfter("715404677277286410", 50).queue((messages -> {
             String args = commandEvent.getArgs().toLowerCase();
             List<Message> potential = new ArrayList<>();
-            for(Message message : messages) {
+            for(Message message : messages.getRetrievedHistory()) {
                 String content = message.getContentRaw().toLowerCase();
                 if(content.contains(args)) {
                     potential.add(message);
@@ -39,9 +39,6 @@ public class FAQCommand extends Command {
             if(potential.size() == 0) {
                 commandEvent.reply("No FAQ found for the input. Try being less specific.");
                 return;
-            }
-            if(potential.size() > 1) {
-                commandEvent.reply("Multiple potential FAQs were found, try being a bit more specific. Showing the first result.");
             }
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("FAQ Found for Input");
