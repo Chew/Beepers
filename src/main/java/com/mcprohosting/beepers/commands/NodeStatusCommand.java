@@ -2,9 +2,11 @@ package com.mcprohosting.beepers.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.mcprohosting.MCProHostingAPI;
 import com.mcprohosting.beepers.Main;
 import com.mcprohosting.beepers.util.QueryMember;
 import com.mcprohosting.beepers.util.SendTemporaryMessage;
+import com.mcprohosting.objects.Node;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -18,7 +20,8 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.text.DecimalFormat;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 public class NodeStatusCommand extends Command {
 
@@ -69,48 +72,32 @@ public class NodeStatusCommand extends Command {
     }
 
     public EmbedBuilder allNodes() {
-        JSONArray data = retrieveNodeInformation();
+        List<Node> nodes;
         EmbedBuilder embed = new EmbedBuilder();
-        if(data == null) {
+        try {
+            nodes = new MCProHostingAPI().getNodeStatuses();
+        } catch (Exception e) {
             embed.setTitle("Error!");
             embed.setDescription("An error occurred retrieving stats. Please try again in a few seconds!");
             embed.setColor(Color.decode("#ff0000"));
             return embed;
         }
-        if(data.getJSONObject(0).has("error")) {
-            embed.setTitle("Error!");
-            embed.setDescription(data.getJSONObject(0).getString("error"));
-            embed.setColor(Color.decode("#ff0000"));
-            return embed;
-        }
         embed.setTitle("MCProHosting Node Statuses", "https://panel.mcprohosting.com/status");
         embed.setDescription("Only showing status for locations with at least 1 down node.\n" +
-                "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
-        int locationOutages = 0;
-        for(int i = 0; i < data.length(); i++) {
-            JSONObject loc = data.getJSONObject(i);
-            String name = loc.getString("location");
-            JSONArray nodes = loc.getJSONArray("nodes");
-            int nodeCount = nodes.length();
-            int downCount = 0;
-            ArrayList<CharSequence> down = new ArrayList<>();
-            for(int j = 0; j < nodes.length(); j++) {
-                JSONObject node = nodes.getJSONObject(j);
-                if(!node.getBoolean("online")) {
-                    downCount++;
-                    down.add(String.valueOf(node.getInt("id")));
-                }
+                "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!" +
+                "\nNote: Just because a node is marked as down doesn't necessarily mean the node itself is down.");
+        Map<String, List<CharSequence>> outages = new HashMap<>();
+        for(Node node : nodes) {
+            if(!node.isOnline()) {
+                List<CharSequence> loc = outages.getOrDefault(node.getLocation(), new ArrayList<>());
+                loc.add(String.valueOf(node.getId()));
+                outages.put(node.getLocation(), loc);
             }
-            if(downCount > 0)
-                locationOutages++;
-            DecimalFormat df = new DecimalFormat("#.##");
-            int upCount = nodeCount - downCount;
-            if(upCount != nodeCount) {
-                embed.addField(name, "Node Outages: " + String.join(", ", down), true);
-            }
-
         }
-        if(locationOutages == 0) {
+        for(String outage : outages.keySet()) {
+            embed.addField(outage, "Node Outages: " + String.join(", ", outages.get(outage)), true);
+        }
+        if(outages.size() == 0) {
             embed.setDescription("**All nodes are up and working!**\n\n" +
                     "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
         }
@@ -118,75 +105,42 @@ public class NodeStatusCommand extends Command {
     }
 
     public EmbedBuilder specificNode(String nodeId) {
+        int id;
         try {
-            int id = Integer.parseInt(nodeId);
+            id = Integer.parseInt(nodeId);
         } catch(NumberFormatException e) {
             return new EmbedBuilder().setTitle("Error occurred!").setDescription("Invalid input!").setColor(Color.decode("#ff0000"));
         }
-        JSONArray data = retrieveNodeInformation();
+        List<Node> nodes;
         EmbedBuilder embed = new EmbedBuilder();
-        if(data == null) {
+        try {
+            nodes = new MCProHostingAPI().getNodeStatuses();
+        } catch (Exception e) {
             embed.setTitle("Error!");
             embed.setDescription("An error occurred retrieving stats. Please try again in a few seconds!");
             embed.setColor(Color.decode("#ff0000"));
             return embed;
         }
-        if(data.getJSONObject(0).has("error")) {
-            embed.setTitle("Error!");
-            embed.setDescription(data.getJSONObject(0).getString("error"));
-            embed.setColor(Color.decode("#ff0000"));
-            return embed;
-        }
         embed.setTitle("MCProHosting Status for Node " + nodeId, "https://panel.mcprohosting.com/status");
-        JSONObject requestedNode = null;
-        String location = null;
-        for(int i = 0; i < data.length(); i++) {
-            JSONObject loc = data.getJSONObject(i);
-            String name = loc.getString("location");
-            JSONArray nodes = loc.getJSONArray("nodes");
-            ArrayList<CharSequence> down = new ArrayList<>();
-            for(int j = 0; j < nodes.length(); j++) {
-                JSONObject node = nodes.getJSONObject(j);
-                if(node.getInt("id") == Integer.parseInt(nodeId)) {
-                    requestedNode = node;
-                    location = name;
-                }
-            }
+        Node requestedNode = null;
+        for(Node node : nodes) {
+            if(node.getId() == id)
+                requestedNode = node;
         }
         if(requestedNode == null) {
             return new EmbedBuilder().setTitle("Error occurred!").setDescription("Invalid node!").setColor(Color.decode("#ff0000"));
         }
-        embed.addField("Location", location, true);
-        if(requestedNode.getBoolean("online")) {
+        embed.addField("Location", requestedNode.getLocation(), true);
+        if(requestedNode.isOnline()) {
             embed.addField("Status", "Online", true);
             embed.setColor(Color.decode("#00ff00"));
         } else {
             embed.addField("Status", "Offline", true);
             embed.setColor(Color.decode("#ff0000"));
-            embed.setDescription(requestedNode.getString("message"));
+            embed.setDescription(requestedNode.getMessage());
         }
         embed.setFooter("Last Beep");
-        embed.setTimestamp(Instant.ofEpochSecond(requestedNode.getLong("last_heartbeat_epoch_seconds")));
+        embed.setTimestamp(requestedNode.getLastHeartbeat());
         return embed;
-    }
-
-    public JSONArray retrieveNodeInformation() {
-        Request request = new Request.Builder()
-                .url("https://chew.pw/mc/pro/status")
-                .get()
-                .build();
-
-        try (Response response = Main.jda.getHttpClient().newCall(request).execute()) {
-            String r = response.body().string();
-            if(response.code() == 500) {
-                return new JSONArray().put(new JSONObject(r));
-            }
-            return new JSONArray(r);
-        } catch (SocketTimeoutException e) {
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
