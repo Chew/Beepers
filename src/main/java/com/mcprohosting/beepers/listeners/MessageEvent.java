@@ -1,5 +1,6 @@
 package com.mcprohosting.beepers.listeners;
 
+import com.mcprohosting.beepers.Main;
 import com.mcprohosting.beepers.util.QueryMember;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -15,10 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MessageEvent extends ListenerAdapter {
-    /*
-    The actual swear is left private (obviously). You get this instead. It's commented out so my IDE doesn't yell at me.
-    public static final String[] swears = new String[];
-    */
+    public static final String[] swears = Main.getProp().getProperty("swears").split(",");
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
