@@ -3,25 +3,18 @@ package com.mcprohosting.beepers.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.mcprohosting.MCProHostingAPI;
-import com.mcprohosting.beepers.Main;
 import com.mcprohosting.beepers.util.QueryMember;
 import com.mcprohosting.beepers.util.SendTemporaryMessage;
 import com.mcprohosting.objects.Node;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.awt.*;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.text.DecimalFormat;
-import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NodeStatusCommand extends Command {
 
@@ -77,6 +70,7 @@ public class NodeStatusCommand extends Command {
         try {
             nodes = new MCProHostingAPI().getNodeStatuses();
         } catch (Exception e) {
+            e.printStackTrace();
             embed.setTitle("Error!");
             embed.setDescription("An error occurred retrieving stats. Please try again in a few seconds!");
             embed.setColor(Color.decode("#ff0000"));
@@ -116,6 +110,7 @@ public class NodeStatusCommand extends Command {
         try {
             nodes = new MCProHostingAPI().getNodeStatuses();
         } catch (Exception e) {
+            e.printStackTrace();
             embed.setTitle("Error!");
             embed.setDescription("An error occurred retrieving stats. Please try again in a few seconds!");
             embed.setColor(Color.decode("#ff0000"));
