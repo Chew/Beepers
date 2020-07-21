@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FAQCommand extends Command {
@@ -36,15 +37,23 @@ public class FAQCommand extends Command {
                     potential.add(message);
                 }
             }
-            if(potential.size() == 0) {
+            if(potential.isEmpty()) {
                 commandEvent.reply("No FAQ found for the input. Try being less specific.");
                 return;
             }
             EmbedBuilder embed = new EmbedBuilder();
+            Message question = potential.get(0);
+            String content = question.getContentRaw();
             embed.setTitle("FAQ Found for Input");
-            embed.setDescription(potential.get(0).getContentRaw());
-            embed.setAuthor(potential.get(0).getAuthor().getAsTag(), null, potential.get(0).getAuthor().getAvatarUrl());
-            embed.addField("Jump to message", potential.get(0).getJumpUrl(), true);
+            for(String word : content.replace("\n", " ").split(" ")) {
+                if(word.contains("cdn.discordapp.com")) {
+                    embed.setImage(word);
+                    content = content.replace(word, "");
+                }
+            }
+            content = content.trim();
+            embed.setDescription(content);
+            embed.setAuthor(question.getAuthor().getAsTag(), null, question.getAuthor().getAvatarUrl());
             commandEvent.reply(embed.build());
         }));
     }
