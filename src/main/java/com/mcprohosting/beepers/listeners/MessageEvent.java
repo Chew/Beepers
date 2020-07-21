@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import static com.mcprohosting.beepers.util.SwearHandler.handleMessage;
 
 public class MessageEvent extends ListenerAdapter {
-    public static final String[] swears = Main.getProp().getProperty("swears").split(",");
-
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         handleEvent(event.getMember(), event.getMessage(), event.getAuthor(), event.getGuild());

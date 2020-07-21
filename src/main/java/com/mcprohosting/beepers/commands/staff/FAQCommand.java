@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FAQCommand extends Command {
