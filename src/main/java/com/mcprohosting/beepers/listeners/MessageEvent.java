@@ -1,6 +1,5 @@
 package com.mcprohosting.beepers.listeners;
 
-import com.mcprohosting.beepers.Main;
 import com.mcprohosting.beepers.util.QueryMember;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -27,18 +26,24 @@ public class MessageEvent extends ListenerAdapter {
         if(member != null && QueryMember.isStaff(member)) {
             return;
         }
+        TextChannel channel = guild.getTextChannelById("716712150722412664");
         String word = handleMessage(message.getContentRaw());
-        if (word != null) {
-            LoggerFactory.getLogger(this.getClass()).debug("Message '" + message.getContentRaw() + "' swear found: " + word);
-            message.delete().queue();
-            author.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("Hey! You said a bad word, please refrain from swearing! Your message: ```" + message.getContentRaw() + "```").queue());
-            EmbedBuilder oof = new EmbedBuilder();
-            oof.setTitle("Message deleted");
-            oof.setDescription("Offender: " + author.getAsTag() + " " + author.getAsMention() + "\n" +
-                    "Reason: Automatic action carried out for using a blacklisted word (" + word + ")." + "\n" +
-                    "Message: " + message.getContentRaw() + "\n" +
-                    "Responsible moderator: me lol");
-            ((TextChannel) guild.getGuildChannelById("716712150722412664")).sendMessage(oof.build()).queue();
+        if (word == null) {
+            return;
         }
+        LoggerFactory.getLogger(this.getClass()).debug("Message '" + message.getContentRaw() + "' swear found: " + word);
+        message.delete().queue();
+        author.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("Hey! You said a bad word, please refrain from swearing! Your message: ```" + message.getContentRaw() + "```").queue());
+        if(channel == null) {
+            LoggerFactory.getLogger(this.getClass()).error("Automod channel is null, this is not good.");
+            return;
+        }
+        EmbedBuilder oof = new EmbedBuilder();
+        oof.setTitle("Message deleted");
+        oof.setDescription("Offender: " + author.getAsTag() + " " + author.getAsMention() + "\n" +
+                "Reason: Automatic action carried out for using a blacklisted word (" + word + ")." + "\n" +
+                "Message: " + message.getContentRaw() + "\n" +
+                "Responsible moderator: me lol");
+        channel.sendMessage(oof.build()).queue();
     }
 }

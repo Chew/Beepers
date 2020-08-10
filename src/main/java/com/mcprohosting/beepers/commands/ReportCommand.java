@@ -4,6 +4,8 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.TextChannel;
+import org.slf4j.LoggerFactory;
 
 public class ReportCommand extends Command {
 
@@ -19,7 +21,13 @@ public class ReportCommand extends Command {
         if(commandEvent.getChannelType() != ChannelType.PRIVATE)
             commandEvent.getMessage().delete().queue();
 
-        commandEvent.getJDA().getGuildById("584169742156169236").getTextChannelById("715322163850117172").sendMessage(new EmbedBuilder()
+        TextChannel channel = commandEvent.getJDA().getTextChannelById("715322163850117172");
+        if(channel == null) {
+            LoggerFactory.getLogger(this.getClass()).error("Mod channel is missing, this is not good.");
+            return;
+        }
+
+        channel.sendMessage(new EmbedBuilder()
                 .setTitle("New Report from " + commandEvent.getAuthor().getAsTag())
                 .setDescription(commandEvent.getArgs())
                 .build()
