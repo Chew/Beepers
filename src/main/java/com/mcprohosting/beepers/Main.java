@@ -2,16 +2,21 @@ package com.mcprohosting.beepers;
 
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.mcprohosting.beepers.commands.*;
+import com.mcprohosting.beepers.commands.LiveChatCommand;
+import com.mcprohosting.beepers.commands.MultistickCommand;
+import com.mcprohosting.beepers.commands.NodeStatusCommand;
+import com.mcprohosting.beepers.commands.ReportCommand;
 import com.mcprohosting.beepers.commands.staff.AmIStaffCommand;
 import com.mcprohosting.beepers.commands.staff.FAQCommand;
 import com.mcprohosting.beepers.commands.staff.RuleCommand;
 import com.mcprohosting.beepers.commands.staff.SyncSuggestionSiteCommand;
+import com.mcprohosting.beepers.listeners.BanEvent;
 import com.mcprohosting.beepers.listeners.MessageEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +27,7 @@ import java.util.Properties;
 
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    static Properties prop = new Properties();
+    static final Properties prop = new Properties();
     public static JDA jda;
 
     public static void main(String[] args) throws LoginException, IOException {
@@ -32,10 +37,8 @@ public class Main {
 
         CommandClientBuilder client = new CommandClientBuilder();
 
-        client.useDefaultGame();
         client.setOwnerId(prop.getProperty("owner_id"));
 
-        // Set your bot's prefix
         logger.info("Setting Prefix to " + prop.getProperty("prefix"));
         client.setPrefix(prop.getProperty("prefix"));
 
@@ -61,15 +64,15 @@ public class Main {
         // Register JDA
         jda = JDABuilder.createDefault(prop.getProperty("token"))
                 .setStatus(OnlineStatus.ONLINE)
+                .enableIntents(GatewayIntent.GUILD_BANS)
                 .setActivity(Activity.playing("Booting..."))
-                .addEventListeners(waiter, client.build())
+                .addEventListeners(
+                        waiter,
+                        client.build(),
+                        new MessageEvent(),
+                        new BanEvent()
+                )
                 .build();
-
-        jda.addEventListener(new MessageEvent());
-    }
-
-    public JDA getJDA() {
-        return jda;
     }
 
     public static Properties getProp() {
