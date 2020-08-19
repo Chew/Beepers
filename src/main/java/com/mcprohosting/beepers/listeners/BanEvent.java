@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class BanEvent extends ListenerAdapter {
         embed.setTitle("Ban Detected");
         embed.addField("User", event.getUser().getAsTag() + "\n" + event.getUser().getAsMention(), true);
 
-        AuditLogEntry entry = getRecentBan(event.getGuild());
+        AuditLogEntry entry = getRecentBan(event.getGuild(), event.getUser());
         String reason = entry.getReason();
         if(reason == null) {
             reason = "*No reason provided*";
@@ -47,9 +48,10 @@ public class BanEvent extends ListenerAdapter {
         channel.sendMessage(embed.build()).queue();
     }
 
-    public AuditLogEntry getRecentBan(Guild server) {
+    public AuditLogEntry getRecentBan(Guild server, User user) {
         return server.retrieveAuditLogs().cache(false).stream()
                 .filter(it -> it.getType() == ActionType.BAN)
+                .filter(it -> it.getUser() == user)
                 .collect(Collectors.toList()).get(0); // collects actions done by user
     }
 }
