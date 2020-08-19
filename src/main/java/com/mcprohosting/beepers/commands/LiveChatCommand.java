@@ -21,8 +21,13 @@ public class LiveChatCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        commandEvent.getMessage().delete().queue();
+        String mention = commandEvent.getAuthor().getAsMention();
+        if(commandEvent.getArgs().length() > 0 && commandEvent.getArgs().startsWith("<@!")) {
+            mention = commandEvent.getArgs().split(" ")[0];
+        }
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("MCProHosting Live Chat");
+        embed.setTitle("MCProHosting Live Chat", "https://mcph.info/Livechat");
         if(LocalDateTime.now().getHour() >= 8) {
             embed.setDescription("If you have a problem you need solved quickly, check out our Live Chat at [this link](https://mcph.info/Livechat).\n" +
                     "Live Chat is available every day from 9:00 AM - 1:00 AM EST with the exception of Holidays. If you do not see the Live Chat bubble check our social media for an announcement or check back in a few minutes as our team may be undergoing a shift change!\n" +
@@ -36,6 +41,6 @@ public class LiveChatCommand extends Command {
             embed.setFooter("Live Chat opens at");
             embed.setTimestamp(opens);
         }
-        commandEvent.getChannel().sendMessage("Hey, " + commandEvent.getAuthor().getAsMention() + "!").embed(embed.build()).queue();
+        commandEvent.getChannel().sendMessage("Hey, " + mention + "!").embed(embed.build()).queue();
     }
 }
