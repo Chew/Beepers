@@ -51,7 +51,7 @@ public class BanEvent extends ListenerAdapter {
     public AuditLogEntry getRecentBan(Guild server, User user) {
         return server.retrieveAuditLogs().cache(false).stream()
                 .filter(it -> it.getType() == ActionType.BAN)
-                .filter(it -> it.getUser() == user)
+                .filter(it -> it.getTargetId().equals(user.getId()))
                 .collect(Collectors.toList()).get(0); // collects actions done by user
     }
 }
