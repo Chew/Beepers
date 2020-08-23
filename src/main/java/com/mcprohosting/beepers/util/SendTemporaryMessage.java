@@ -7,6 +7,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SendTemporaryMessage {
     public static void send(CommandEvent event, String message) {
+        send(event, message, 5000);
+    }
+
+    public static void send(CommandEvent event, String message, int duration) {
         AtomicReference<Message> sent = new AtomicReference<>();
         event.getChannel().sendMessage(message).queue(sent::set);
         new java.util.Timer().schedule(
@@ -16,7 +20,7 @@ public class SendTemporaryMessage {
                         sent.get().delete().queue();
                     }
                 },
-                5000
+                duration
         );
     }
 }
