@@ -3,10 +3,8 @@ package com.mcprohosting.beepers.commands.staff;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.mcprohosting.beepers.Main;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.*;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -29,9 +27,13 @@ public class SyncSuggestionSiteCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
+        gatherSuggestionData(commandEvent.getJDA(), commandEvent.getGuild());
+    }
+
+    public static void gatherSuggestionData(JDA jda, Guild server) {
+        Logger logger = LoggerFactory.getLogger(SyncSuggestionSiteCommand.class);
         logger.debug("Gathering Suggestion History");
-        TextChannel suggestions = commandEvent.getGuild().getTextChannelById("715650008942116985");
+        TextChannel suggestions = server.getTextChannelById("715650008942116985");
         if(suggestions == null) {
             logger.error("Suggestions Channel is null. This is not good.");
             return;
@@ -40,8 +42,8 @@ public class SyncSuggestionSiteCommand extends Command {
             JSONArray data = new JSONArray();
             for(Message message : messages) {
                 List<MessageReaction> reactions = message.getReactions();
-                String up = MessageReaction.ReactionEmote.fromUnicode("⬆", commandEvent.getJDA()).getName();
-                String down  = MessageReaction.ReactionEmote.fromUnicode("⬇", commandEvent.getJDA()).getName();
+                String up = MessageReaction.ReactionEmote.fromUnicode("⬆", jda).getName();
+                String down  = MessageReaction.ReactionEmote.fromUnicode("⬇", jda).getName();
                 int upCount = 0;
                 int downCount = 0;
                 for(MessageReaction react : reactions) {
@@ -78,11 +80,10 @@ public class SyncSuggestionSiteCommand extends Command {
             logger.debug("Sending to server: " + data.toString());
             String response = sendSuggestionData(data);
             logger.debug("Response: " + response);
-            commandEvent.reply(response);
         });
     }
 
-    public String sendSuggestionData(JSONArray data) {
+    public static String sendSuggestionData(JSONArray data) {
         Request request = new Request.Builder()
                 .url("https://chew.pw/mcpro/suggestions/update")
                 .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), new JSONObject().put("data", data).toString()))
