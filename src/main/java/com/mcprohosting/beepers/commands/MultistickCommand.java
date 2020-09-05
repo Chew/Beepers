@@ -11,6 +11,7 @@ public class MultistickCommand extends Command {
         this.cooldown = 10;
         this.cooldownScope = CooldownScope.CHANNEL;
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
+        this.guildOnly = false;
     }
 
     @Override
