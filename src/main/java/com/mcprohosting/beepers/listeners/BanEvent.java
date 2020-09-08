@@ -1,15 +1,10 @@
 package com.mcprohosting.beepers.listeners;
 
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
-
-import java.time.Instant;
 
 public class BanEvent extends ListenerAdapter {
     @Override
@@ -22,8 +17,12 @@ public class BanEvent extends ListenerAdapter {
             return;
         }
 
+        channel.sendMessage(event.getUser().getAsTag() + "\n" + event.getUser().getAsMention() + " was banned!").queue();
+
+        /*
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Ban Detected");
+
         event.getGuild().retrieveAuditLogs()
                 .type(ActionType.BAN)
                 .limit(1)
@@ -50,5 +49,7 @@ public class BanEvent extends ListenerAdapter {
 
                     channel.sendMessage(embed.build()).queue();
                 });
+
+         */
     }
 }
