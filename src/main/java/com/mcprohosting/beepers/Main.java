@@ -6,6 +6,7 @@ import com.mcprohosting.beepers.commands.LiveChatCommand;
 import com.mcprohosting.beepers.commands.MultistickCommand;
 import com.mcprohosting.beepers.commands.NodeStatusCommand;
 import com.mcprohosting.beepers.commands.ReportCommand;
+import com.mcprohosting.beepers.commands.TicketCommand;
 import com.mcprohosting.beepers.commands.staff.AmIStaffCommand;
 import com.mcprohosting.beepers.commands.staff.FAQCommand;
 import com.mcprohosting.beepers.commands.staff.RuleCommand;
@@ -59,7 +60,8 @@ public class Main {
                 new LiveChatCommand(),
                 new MultistickCommand(),
                 new NodeStatusCommand(),
-                new ReportCommand()
+                new ReportCommand(),
+                new TicketCommand()
         );
 
         // Register JDA
