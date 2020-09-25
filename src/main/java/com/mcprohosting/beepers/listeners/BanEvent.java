@@ -1,5 +1,6 @@
 package com.mcprohosting.beepers.listeners;
 
+import com.mcprohosting.beepers.objects.MCProChannel;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -17,11 +18,7 @@ public class BanEvent extends ListenerAdapter {
     public void onGuildBan(@NotNull GuildBanEvent event) {
         LoggerFactory.getLogger(this.getClass()).info("Ban Event raised.");
 
-        TextChannel channel = event.getJDA().getTextChannelById("715409019308736563");
-        if (channel == null) {
-            LoggerFactory.getLogger(this.getClass()).error("Could not find channel, this is not good.");
-            return;
-        }
+        TextChannel channel = MCProChannel.MOD_LOG.getAsChannel();
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Ban Detected");

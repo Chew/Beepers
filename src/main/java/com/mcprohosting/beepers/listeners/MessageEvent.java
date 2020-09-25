@@ -1,5 +1,6 @@
 package com.mcprohosting.beepers.listeners;
 
+import com.mcprohosting.beepers.objects.MCProChannel;
 import com.mcprohosting.beepers.util.QueryMember;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -14,19 +15,19 @@ import static com.mcprohosting.beepers.util.SwearHandler.handleMessage;
 public class MessageEvent extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        handleEvent(event.getMember(), event.getMessage(), event.getAuthor(), event.getGuild());
+        handleEvent(event.getMember(), event.getMessage(), event.getAuthor());
     }
 
     @Override
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
-        handleEvent(event.getMember(), event.getMessage(), event.getAuthor(), event.getGuild());
+        handleEvent(event.getMember(), event.getMessage(), event.getAuthor());
     }
 
-    private void handleEvent(Member member, Message message, User author, Guild guild) {
+    private void handleEvent(Member member, Message message, User author) {
         if(member != null && QueryMember.isStaff(member)) {
             return;
         }
-        TextChannel channel = guild.getTextChannelById("716712150722412664");
+        TextChannel channel = MCProChannel.AUTO_MOD_LOG.getAsChannel();
         String word = handleMessage(message.getContentRaw());
         if (word == null) {
             return;
@@ -34,10 +35,6 @@ public class MessageEvent extends ListenerAdapter {
         LoggerFactory.getLogger(this.getClass()).debug("Message '" + message.getContentRaw() + "' swear found: " + word);
         message.delete().queue();
         author.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("Hey! You said a bad word, please refrain from swearing! Your message: ```" + message.getContentRaw() + "```").queue());
-        if(channel == null) {
-            LoggerFactory.getLogger(this.getClass()).error("Automod channel is null, this is not good.");
-            return;
-        }
         EmbedBuilder oof = new EmbedBuilder();
         oof.setTitle("Message deleted");
         oof.setDescription("Offender: " + author.getAsTag() + " " + author.getAsMention() + "\n" +

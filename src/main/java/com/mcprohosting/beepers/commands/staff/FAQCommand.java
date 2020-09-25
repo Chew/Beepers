@@ -2,6 +2,7 @@ package com.mcprohosting.beepers.commands.staff;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.mcprohosting.beepers.objects.MCProChannel;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
@@ -22,11 +23,7 @@ public class FAQCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
-        TextChannel faq = commandEvent.getGuild().getTextChannelById("715393203095994380");
-        if(faq == null) {
-            LoggerFactory.getLogger(this.getClass()).error("FAQ Channel is null. This is not good.");
-            return;
-        }
+        TextChannel faq = MCProChannel.FAQ.getAsChannel();
         faq.getHistoryAfter("715404677277286410", 50).queue((messages -> {
             String args = commandEvent.getArgs().toLowerCase();
             List<Message> potential = new ArrayList<>();

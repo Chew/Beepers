@@ -3,6 +3,7 @@ package com.mcprohosting.beepers.commands.staff;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.mcprohosting.beepers.Main;
+import com.mcprohosting.beepers.objects.MCProChannel;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import okhttp3.MediaType;
@@ -33,11 +34,7 @@ public class SyncSuggestionSiteCommand extends Command {
     public static void gatherSuggestionData(JDA jda, Guild server) {
         Logger logger = LoggerFactory.getLogger(SyncSuggestionSiteCommand.class);
         logger.debug("Gathering Suggestion History");
-        TextChannel suggestions = server.getTextChannelById("715650008942116985");
-        if(suggestions == null) {
-            logger.error("Suggestions Channel is null. This is not good.");
-            return;
-        }
+        TextChannel suggestions = MCProChannel.SUGGESTIONS.getAsChannel();
         suggestions.getHistory().retrievePast(50).queue((messages) -> {
             JSONArray data = new JSONArray();
             for(Message message : messages) {

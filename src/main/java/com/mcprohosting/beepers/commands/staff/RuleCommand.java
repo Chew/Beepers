@@ -2,6 +2,7 @@ package com.mcprohosting.beepers.commands.staff;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.mcprohosting.beepers.objects.MCProChannel;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -34,11 +35,7 @@ public class RuleCommand extends Command {
             return;
         }
         TextChannel welcomeChannel;
-        welcomeChannel = commandEvent.getGuild().getTextChannelById("715406878976507954");
-        if(welcomeChannel == null) {
-            commandEvent.reply("Welcome channel could not be found, this is not good.");
-            return;
-        }
+        welcomeChannel = MCProChannel.RULES.getAsChannel();
         welcomeChannel.retrieveMessageById("715603752639397931").queue((msg) -> {
             String[] rules = msg.getContentRaw().split("\n");
             List<String> actualRules = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.mcprohosting.beepers.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.mcprohosting.beepers.objects.MCProChannel;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -21,11 +22,7 @@ public class ReportCommand extends Command {
         if(commandEvent.getChannelType() != ChannelType.PRIVATE)
             commandEvent.getMessage().delete().queue();
 
-        TextChannel channel = commandEvent.getJDA().getTextChannelById("715322163850117172");
-        if(channel == null) {
-            LoggerFactory.getLogger(this.getClass()).error("Mod channel is missing, this is not good.");
-            return;
-        }
+        TextChannel channel = MCProChannel.MOD_LOG.getAsChannel();
 
         channel.sendMessage(new EmbedBuilder()
                 .setTitle("New Report from " + commandEvent.getAuthor().getAsTag())

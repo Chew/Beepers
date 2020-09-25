@@ -1,6 +1,7 @@
 package com.mcprohosting.beepers.listeners;
 
 import com.mcprohosting.beepers.commands.staff.SyncSuggestionSiteCommand;
+import com.mcprohosting.beepers.objects.MCProChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,7 +17,7 @@ public class SuggestHandler extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         // If it's not in #decisions, ignore
-        if(event.getChannel() != event.getGuild().getTextChannelById("715650049744306318"))
+        if(event.getChannel() != MCProChannel.DECISIONS.getAsChannel())
             return;
 
         logger.debug("New Decision posted, syncing...");
@@ -27,7 +28,7 @@ public class SuggestHandler extends ListenerAdapter {
     @Override
     public void onGenericGuildMessageReaction(GenericGuildMessageReactionEvent event) {
         // If it's not in #suggestions, ignore
-        if(event.getChannel() != event.getGuild().getTextChannelById("715650008942116985"))
+        if(event.getChannel() != MCProChannel.SUGGESTIONS.getAsChannel())
             return;
         // If it's carl, ignore
         if(event.getUserId().equals("235148962103951360"))

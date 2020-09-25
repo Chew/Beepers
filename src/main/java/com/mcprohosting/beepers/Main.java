@@ -13,6 +13,7 @@ import com.mcprohosting.beepers.commands.staff.RuleCommand;
 import com.mcprohosting.beepers.commands.staff.SyncSuggestionSiteCommand;
 import com.mcprohosting.beepers.listeners.BanEvent;
 import com.mcprohosting.beepers.listeners.MessageEvent;
+import com.mcprohosting.beepers.listeners.ReadyListener;
 import com.mcprohosting.beepers.listeners.SuggestHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -74,7 +75,8 @@ public class Main {
                         client.build(),
                         new MessageEvent(),
                         new BanEvent(),
-                        new SuggestHandler()
+                        new SuggestHandler(),
+                        new ReadyListener()
                 )
                 .build();
     }
