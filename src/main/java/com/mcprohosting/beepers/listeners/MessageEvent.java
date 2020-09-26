@@ -24,7 +24,7 @@ public class MessageEvent extends ListenerAdapter {
     }
 
     private void handleEvent(Member member, Message message, User author) {
-        if(member != null && QueryMember.isStaff(member)) {
+        if(member != null && hasPower(member)) {
             return;
         }
         TextChannel channel = MCProChannel.AUTO_MOD_LOG.getAsChannel();

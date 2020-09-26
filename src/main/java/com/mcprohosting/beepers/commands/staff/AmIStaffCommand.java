@@ -2,7 +2,9 @@ package com.mcprohosting.beepers.commands.staff;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.mcprohosting.beepers.util.QueryMember;
+
+import static com.mcprohosting.beepers.util.QueryMember.hasPower;
+import static com.mcprohosting.beepers.util.QueryMember.isStaff;
 
 public class AmIStaffCommand extends Command {
     public AmIStaffCommand() {
@@ -14,7 +16,10 @@ public class AmIStaffCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
-        commandEvent.reply(String.valueOf(QueryMember.isStaff(commandEvent.getMember())));
+        commandEvent.reply(
+            "Staff? " + isStaff(commandEvent.getMember()) + "\n" +
+            "Has Power? " + hasPower(commandEvent.getMember())
+        );
     }
 
 }

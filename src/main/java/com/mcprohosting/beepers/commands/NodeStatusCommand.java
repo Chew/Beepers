@@ -40,7 +40,7 @@ public class NodeStatusCommand extends Command {
         args = args.replace(" ", "");
         if(args.contains("--no-dm")) {
             args = args.replace("--no-dm", "");
-            if(commandEvent.getMember() != null && QueryMember.isStaff(commandEvent.getMember()))
+            if(commandEvent.getMember() != null && QueryMember.hasPower(commandEvent.getMember()))
                 replyInDm = false;
         }
         if(replyInDm) {
