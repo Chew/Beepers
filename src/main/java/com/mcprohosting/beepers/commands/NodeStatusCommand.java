@@ -77,9 +77,10 @@ public class NodeStatusCommand extends Command {
             return embed;
         }
         embed.setTitle("MCProHosting Node Statuses", "https://panel.mcprohosting.com/status");
-        embed.setDescription("Only showing status for locations with at least 1 down node.\n" +
-                "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!" +
-                "\nNote: Just because a node is marked as down doesn't necessarily mean the node itself is down.");
+        embed.setDescription("""
+            Only showing status for locations with at least 1 down node.
+            Click the link above to view all statuses, or type `!node [your node]` to find more information about it!
+            Note: Just because a node is marked as down doesn't necessarily mean the node itself is down.""");
         Map<String, List<CharSequence>> outages = new HashMap<>();
         for(Node node : nodes) {
             if(!node.isOnline()) {
@@ -92,8 +93,10 @@ public class NodeStatusCommand extends Command {
             embed.addField(outage, "Node Outages: " + String.join(", ", outages.get(outage)), true);
         }
         if(outages.size() == 0) {
-            embed.setDescription("**All nodes are up and working!**\n\n" +
-                    "Click the link above to view all statuses, or type `!node [your node]` to find more information about it!");
+            embed.setDescription("""
+                **All nodes are up and working!**
+
+                Click the link above to view all statuses, or type `!node [your node]` to find more information about it!""");
         }
         return embed;
     }
