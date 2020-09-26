@@ -1,15 +1,18 @@
 package com.mcprohosting.beepers.listeners;
 
 import com.mcprohosting.beepers.objects.MCProChannel;
-import com.mcprohosting.beepers.util.QueryMember;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import static com.mcprohosting.beepers.util.QueryMember.hasPower;
 import static com.mcprohosting.beepers.util.SwearHandler.handleMessage;
 
 public class MessageEvent extends ListenerAdapter {
