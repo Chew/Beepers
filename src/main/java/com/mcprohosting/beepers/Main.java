@@ -9,9 +9,11 @@ import com.mcprohosting.beepers.commands.ReportCommand;
 import com.mcprohosting.beepers.commands.TicketCommand;
 import com.mcprohosting.beepers.commands.staff.AmIStaffCommand;
 import com.mcprohosting.beepers.commands.staff.FAQCommand;
+import com.mcprohosting.beepers.commands.staff.HoldCommand;
 import com.mcprohosting.beepers.commands.staff.RuleCommand;
 import com.mcprohosting.beepers.commands.staff.SyncSuggestionSiteCommand;
 import com.mcprohosting.beepers.listeners.BanEvent;
+import com.mcprohosting.beepers.listeners.ChannelCreateListener;
 import com.mcprohosting.beepers.listeners.MessageEvent;
 import com.mcprohosting.beepers.listeners.ReadyListener;
 import com.mcprohosting.beepers.listeners.SuggestHandler;
@@ -54,6 +56,7 @@ public class Main {
                 // Staff Commands
                 new AmIStaffCommand(),
                 new FAQCommand(),
+                new HoldCommand(),
                 new RuleCommand(),
                 new SyncSuggestionSiteCommand(),
 
@@ -74,6 +77,7 @@ public class Main {
                         waiter,
                         client.build(),
                         new MessageEvent(),
+                        new ChannelCreateListener(),
                         new BanEvent(),
                         new SuggestHandler(),
                         new ReadyListener()

@@ -1,6 +1,7 @@
 package com.mcprohosting.beepers.listeners;
 
 import com.mcprohosting.beepers.objects.MCProChannel;
+import com.mcprohosting.beepers.objects.TicketCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -13,11 +14,44 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import static com.mcprohosting.beepers.util.QueryMember.hasPower;
+import static com.mcprohosting.beepers.util.QueryMember.isStaff;
 import static com.mcprohosting.beepers.util.SwearHandler.handleMessage;
 
 public class MessageEvent extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        // Iterate through each ticket category, if it's not in this category we don't care.
+        for (TicketCategory ticketCategory : TicketCategory.values()) {
+            if (event.getChannel().getParent() != null && ticketCategory.getId().equals(event.getChannel().getParent().getId())) {
+                // Dictate outcome based on type of category this ticket is in
+                switch (ticketCategory) {
+                    // If it's "Open"
+                    case OPEN -> {
+                        if (event.getMember() != null && isStaff(event.getMember())) {
+                            // Staff Response
+                            TicketCategory.ANSWERED.moveHere(event.getGuild(), event.getChannel());
+                        } else {
+                            // Customer Response
+                            TicketCategory.CUSTOMER_REPLY.moveHere(event.getGuild(), event.getChannel());
+                        }
+                    }
+                    // If a customer responded, it does not matter if they respond again since it's already in this category
+                    case CUSTOMER_REPLY -> {
+                        // Staff response means move it to "Answered"
+                        if (event.getMember() != null && isStaff(event.getMember())) {
+                            TicketCategory.ANSWERED.moveHere(event.getGuild(), event.getChannel());
+                        }
+                    }
+                    // Opposite of above, if a staff responded, don't move it
+                    case ANSWERED -> {
+                        // If a customer respond, mark it as Customer Reply
+                        if (event.getMember() != null && !isStaff(event.getMember())) {
+                            TicketCategory.CUSTOMER_REPLY.moveHere(event.getGuild(), event.getChannel());
+                        }
+                    }
+                }
+            }
+        }
         handleEvent(event.getMember(), event.getMessage(), event.getAuthor());
     }
 
