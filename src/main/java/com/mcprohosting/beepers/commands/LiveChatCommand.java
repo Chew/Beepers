@@ -55,7 +55,10 @@ public class LiveChatCommand extends Command {
                 Live Chat is available every day from 9:00 AM - 1:00 AM EST with the exception of Holidays.
                 Live Chat is currently closed, see below for when it opens. <:beepers:715601889391149125>""");
             LocalDateTime now = LocalDateTime.now();
-            ZonedDateTime opens = LocalDateTime.of(now.toLocalDate(), LocalTime.of(8, 0)).atZone(TimeZone.getTimeZone("America/Chicago").toZoneId());
+            LocalDate localDate = now.toLocalDate();
+            if (LocalDateTime.now().getHour() >= 8)
+                localDate = localDate.plusDays(1);
+            ZonedDateTime opens = LocalDateTime.of(localDate, LocalTime.of(8, 0)).atZone(TimeZone.getTimeZone("America/Chicago").toZoneId());
             embed.setFooter("Live Chat opens at");
             embed.setTimestamp(opens);
         }
