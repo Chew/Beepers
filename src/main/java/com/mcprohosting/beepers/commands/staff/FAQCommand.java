@@ -23,6 +23,7 @@ public class FAQCommand extends Command {
 
     @Override
     protected void execute(CommandEvent commandEvent) {
+        commandEvent.getMessage().delete().queue();
         TextChannel faq = MCProChannel.FAQ.getAsChannel();
         faq.getHistoryAfter("715404677277286410", 50).queue((messages -> {
             String args = commandEvent.getArgs().toLowerCase();

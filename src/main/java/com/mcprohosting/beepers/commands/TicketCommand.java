@@ -11,7 +11,7 @@ public class TicketCommand extends Command {
         this.name = "ticket";
         this.guildOnly = false;
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
-        this.cooldown = 10;
+        this.cooldown = 60;
         this.cooldownScope = CooldownScope.CHANNEL;
     }
 
