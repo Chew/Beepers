@@ -20,6 +20,8 @@ import static com.mcprohosting.beepers.util.SwearHandler.handleMessage;
 public class MessageEvent extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        if (event.getMember() != null && event.getMember().getUser().isBot())
+            return;
         // Iterate through each ticket category, if it's not in this category we don't care.
         for (TicketCategory ticketCategory : TicketCategory.values()) {
             if (event.getChannel().getParent() != null && ticketCategory.getId().equals(event.getChannel().getParent().getId())) {
