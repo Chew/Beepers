@@ -15,6 +15,7 @@ public class HoldCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        event.getMessage().delete().queue();
         for (TicketCategory ticketCategory : TicketCategory.values()) {
             if (event.getTextChannel().getParent() != null && ticketCategory.getId().equals(event.getTextChannel().getParent().getId())) {
                 if (isStaff(event.getMember())) {
