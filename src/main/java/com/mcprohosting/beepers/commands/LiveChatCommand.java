@@ -5,16 +5,23 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class LiveChatCommand extends Command {
+    private final List<Date> holidays = new ArrayList<>();
+
     public LiveChatCommand() {
         this.name = "livechat";
         this.aliases = new String[]{"islivechatopen"};
-        this.cooldown = 1;
+        this.cooldown = 60;
         this.cooldownScope = CooldownScope.CHANNEL;
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
     }
@@ -28,7 +35,16 @@ public class LiveChatCommand extends Command {
         }
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("MCProHosting Live Chat", "https://mcph.info/Livechat");
-        if(LocalDateTime.now().getHour() >= 8) {
+        boolean open = LocalDateTime.now().getHour() >= 8;
+        Date today = Date.from(Instant.now());
+        today.setYear(2020);
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        if(isHoliday(today))
+            open = false;
+
+        if(open) {
             embed.setDescription("""
                 If you have a problem you need solved quickly, check out our Live Chat at [this link](https://mcph.info/Livechat).
                 Live Chat is available every day from 9:00 AM - 1:00 AM EST with the exception of Holidays. If you do not see the Live Chat bubble check our social media for an announcement or check back in a few minutes as our team may be undergoing a shift change!
@@ -44,5 +60,13 @@ public class LiveChatCommand extends Command {
             embed.setTimestamp(opens);
         }
         commandEvent.getChannel().sendMessage("Hey, " + mention + "!").embed(embed.build()).queue();
+    }
+
+    private boolean isHoliday(Date date) {
+        for (Date aDate : holidays) {
+            if(date.getMonth() == aDate.getMonth() && date.getDay() == aDate.getDay())
+                return true;
+        }
+        return false;
     }
 }
