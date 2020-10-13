@@ -2,15 +2,17 @@ package com.mcprohosting.beepers.commands.staff;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.mcprohosting.beepers.objects.MCProChannel;
+import com.mcprohosting.beepers.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import org.slf4j.LoggerFactory;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 public class FAQCommand extends Command {
 
@@ -24,34 +26,41 @@ public class FAQCommand extends Command {
     @Override
     protected void execute(CommandEvent commandEvent) {
         commandEvent.getMessage().delete().queue();
-        TextChannel faq = MCProChannel.FAQ.getAsChannel();
-        faq.getHistoryAfter("715404677277286410", 50).queue((messages -> {
-            String args = commandEvent.getArgs().toLowerCase();
-            List<Message> potential = new ArrayList<>();
-            for(Message message : messages.getRetrievedHistory()) {
-                String content = message.getContentRaw().toLowerCase();
-                if(content.contains(args)) {
-                    potential.add(message);
-                }
+
+        JSONArray response = getFAQ(commandEvent.getArgs());
+        if (response.isEmpty()) {
+            commandEvent.reply("No FAQ found for the input. Try being less specific.");
+            return;
+        }
+
+        EmbedBuilder embed = new EmbedBuilder();
+        String content = response.getJSONObject(0).getString("data");
+        String title = content.split("\n")[0];
+        String description = content.replace(title + "\n", "");
+        embed.setTitle(title);
+        for(String word : description.replace("\n", " ").split(" ")) {
+            if(word.contains("cdn.discordapp.com")) {
+                embed.setImage(word);
+                description = description.replace(word, "");
             }
-            if(potential.isEmpty()) {
-                commandEvent.reply("No FAQ found for the input. Try being less specific.");
-                return;
-            }
-            EmbedBuilder embed = new EmbedBuilder();
-            Message question = potential.get(0);
-            String content = question.getContentRaw();
-            embed.setTitle("FAQ Found for Input");
-            for(String word : content.replace("\n", " ").split(" ")) {
-                if(word.contains("cdn.discordapp.com")) {
-                    embed.setImage(word);
-                    content = content.replace(word, "");
-                }
-            }
-            content = content.trim();
-            embed.setDescription(content);
-            embed.setAuthor(question.getAuthor().getAsTag(), null, question.getAuthor().getAvatarUrl());
-            commandEvent.reply(embed.build());
-        }));
+        }
+        description = description.trim();
+        embed.setDescription(description);
+        commandEvent.reply(embed.build());
+    }
+
+    private JSONArray getFAQ(String input) {
+        Request request = new Request.Builder()
+            .url("https://chew.pw/mcpro/faq")
+            .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), new JSONObject().put("search", input).toString()))
+            .addHeader("Authorization", Main.getProp().getProperty("chewapi"))
+            .build();
+
+        try (Response response = Main.jda.getHttpClient().newCall(request).execute()) {
+            return new JSONArray(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new JSONArray();
+        }
     }
 }
